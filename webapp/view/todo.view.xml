@@ -1,0 +1,37 @@
+<mvc:View
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  controllerName="todolist.controller.todo">
+
+  <VBox id="mainVBox" class="sapUiSmallMargin">
+    <HBox id="inputHBox">
+      <Input
+        id="newTaskInput"
+        placeholder="Adicione uma tarefa..."
+        width="80%" />
+      <Button
+        id="addTaskButton"
+        text="Adicionar"
+        press=".onAddTask" />
+    </HBox>
+
+    <List
+      id="taskList"
+      items="{
+        path: '/tasks'
+      }">
+      <CustomListItem id="taskListItem">
+        <HBox id="taskItemHBox">
+          <CheckBox
+            id="taskCheckBox"
+            selected="{done}"
+            select=".onToggleTask" />
+          <Text
+            id="taskTitleText"
+            text="{title}"
+            class="{= ${done} ? 'sapUiSmallMargin textLineThrough' : 'sapUiSmallMargin'}" />
+        </HBox>
+      </CustomListItem>
+    </List>
+  </VBox>
+</mvc:View>
