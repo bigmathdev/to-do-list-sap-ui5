@@ -1,14 +1,32 @@
 <mvc:View
   xmlns:mvc="sap.ui.core.mvc"
   xmlns="sap.m"
+  xmlns:core="sap.ui.core"
   controllerName="todolist.controller.todo">
 
   <VBox id="mainVBox" class="sapUiSmallMargin">
     <HBox id="inputHBox">
       <Input
         id="newTaskInput"
-        placeholder="Adicione uma tarefa..."
-        width="80%" />
+        placeholder="O que precisa ser feito?"
+        width="100%" 
+        submit=".onInputSubmit"
+        />
+        <Select
+        id="prioritySelect">
+          <items>
+            <core:Item id="priorityLow" key="low" text="Baixa" />
+            <core:Item id="priorityMedium" key="medium" text="Média" />
+            <core:Item id="priorityHigh" key="high" text="Alta" />
+            <core:Item id="priorityCritical" key="critical" text="Crítica"></core:Item>
+          </items>
+        </Select>
+        <DatePicker
+          id="taskDatePicker"
+          placeholder="dd/mm/aaaa"
+          displayFormat="dd/MM/yyyy"
+          valueFormat="yyyy-MM-dd"
+          width="150px" />
       <Button
         id="addTaskButton"
         text="Adicionar"
@@ -26,10 +44,18 @@
             id="taskCheckBox"
             selected="{done}"
             select=".onToggleTask" />
-          <Text
-            id="taskTitleText"
-            text="{title}"
-            class="{= ${done} ? 'sapUiSmallMargin textLineThrough' : 'sapUiSmallMargin'}" />
+            <Text
+              id="taskTitleText"
+              text="{title}"
+              class="{= ${done} ? 'sapUiSmallMargin textLineThrough' : 'sapUiSmallMargin'}" />
+            <GenericTag
+              id="taskTag"
+              text="{tag}"
+              class="sapUiTinyMarginBegin" />
+              <HBox id="taskDateHBox" class="sapUiTinyMarginBegin">
+                <core:Icon id="taskDateIcon" src="sap-icon://calendar" size="1rem" class="sapUiTinyMarginEnd" />
+                <Text id="taskDateText" text="{date}" />
+              </HBox>
         </HBox>
       </CustomListItem>
     </List>
