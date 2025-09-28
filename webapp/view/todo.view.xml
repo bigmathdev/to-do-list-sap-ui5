@@ -8,6 +8,88 @@
         id="mainVBox"
         class="sapUiSmallMargin"
     >
+        <HBox
+            id="kpiBox"
+            class="sapUiSmallMarginBottom"
+        >
+            <Panel
+                id="latePanel"
+                headerText="Tarefas atrasadas"
+                class="sapUiTinyMarginEnd"
+                width="200px"
+                xmlns="sap.m"
+            >
+                <VBox id="latePanelVBox">
+                    <core:Icon
+                        id="latePanelIcon"
+                        src="sap-icon://error"
+                        color="red"
+                        size="2rem"
+                    />
+                    <Text
+                        id="latePanelText"
+                        text="{kpiModel>/late}"
+                        class="sapUiLargeFont"
+                    />
+                    <Text
+                        id="latePanelDescText"
+                        text="Contagem baseada no prazo e status."
+                        class="sapUiSmallMarginTop"
+                    />
+                </VBox>
+            </Panel>
+            <Panel
+                id="todayPanel"
+                headerText="Para hoje"
+                class="sapUiTinyMarginEnd"
+                width="200px"
+                xmlns="sap.m"
+            >
+                <VBox id="todayPanelVBox">
+                    <core:Icon
+                        id="todayPanelIcon"
+                        src="sap-icon://appointment-2"
+                        color="blue"
+                        size="2rem"
+                    />
+                    <Text
+                        id="todayPanelText"
+                        text="{kpiModel>/today}"
+                        class="sapUiLargeFont"
+                    />
+                    <Text
+                        id="todayPanelDescText"
+                        text="Tarefas com prazo hoje (abertas)."
+                        class="sapUiSmallMarginTop"
+                    />
+                </VBox>
+            </Panel>
+            <Panel
+                id="tomorrowPanel"
+                headerText="Amanhã (D+1)"
+                width="200px"
+                xmlns="sap.m"
+            >
+                <VBox id="tomorrowPanelVBox">
+                    <core:Icon
+                        id="tomorrowPanelIcon"
+                        src="sap-icon://calendar"
+                        color="gray"
+                        size="2rem"
+                    />
+                    <Text
+                        id="tomorrowPanelText"
+                        text="{kpiModel>/tomorrow}"
+                        class="sapUiLargeFont"
+                    />
+                    <Text
+                        id="tomorrowPanelDescText"
+                        text="Tarefas com prazo amanhã (abertas)."
+                        class="sapUiSmallMarginTop"
+                    />
+                </VBox>
+            </Panel>
+        </HBox>
         <HBox id="inputHBox">
             <Input
                 id="newTaskInput"
@@ -57,7 +139,7 @@
                 press=".onAddTask"
                 type="Emphasized"
                 icon="sap-icon://add"
-                />
+            />
         </HBox>
 
         <List
@@ -76,7 +158,13 @@
                     <Text
                         id="taskTitleText"
                         text="{title}"
-                        class="{= ${done} ? 'sapUiSmallMargin textLineThrough' : 'sapUiSmallMargin'}"
+                        class="{
+        parts: [
+          {path: 'done'},
+          {path: 'isLate'}
+        ],
+        formatter: '.formatTaskClass'
+    }"
                     />
                     <GenericTag
                         id="taskTag"
@@ -96,6 +184,13 @@
                         <Text
                             id="taskDateText"
                             text="{date}"
+                        />
+
+                        <Button
+                            id="clearTasksButton"
+                            press=".onClearTasks"
+                            type="Reject"
+                            icon="sap-icon://delete"
                         />
                     </HBox>
                 </HBox>
