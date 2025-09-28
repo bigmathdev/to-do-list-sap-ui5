@@ -1,3 +1,9 @@
-.textLineThrough {
+.taskDone {
   text-decoration: line-through;
+  color: gray;
+}
+
+.taskLate {
+  color: red;
+  font-weight: bold;
 }
