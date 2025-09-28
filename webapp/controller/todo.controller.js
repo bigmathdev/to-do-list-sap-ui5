@@ -163,6 +163,8 @@ sap.ui.define(
         var sTag = oView.byId("prioritySelect").getSelectedItem()
           ? oView.byId("prioritySelect").getSelectedItem().getText()
           : "";
+
+          console.log(sTag)
         var sDate = oView.byId("taskDatePicker").getDateValue()
           ? oView.byId("taskDatePicker").getDateValue().toLocaleDateString()
           : "";
@@ -286,6 +288,21 @@ sap.ui.define(
         }
         return "";
       },
+
+      statusState: function(sTag) {
+        switch (sTag) {
+          case "Crítica":
+            return "Error"
+          case "Alta":
+            return "Error";
+          case "Média":
+            return "Warning";
+          case "Baixa":
+            return "Success";
+          default:
+            return "None";
+        }
+      }
     });
   }
 );

@@ -9,88 +9,28 @@
         class="sapUiSmallMargin"
     >
         <HBox
+            justifyContent="SpaceAround"
             id="kpiBox"
             class="sapUiSmallMarginBottom"
         >
-            <Panel
-                id="latePanel"
-                headerText="Tarefas atrasadas"
-                class="sapUiTinyMarginEnd"
-                width="200px"
-                xmlns="sap.m"
-            >
-                <VBox id="latePanelVBox">
-                    <core:Icon
-                        id="latePanelIcon"
-                        src="sap-icon://error"
-                        color="red"
-                        size="2rem"
-                    />
-                    <Text
-                        id="latePanelText"
-                        text="{kpiModel>/late}"
-                        class="sapUiLargeFont"
-                    />
-                    <Text
-                        id="latePanelDescText"
-                        text="Contagem baseada no prazo e status."
-                        class="sapUiSmallMarginTop"
-                    />
-                </VBox>
-            </Panel>
-            <Panel
-                id="todayPanel"
-                headerText="Para hoje"
-                class="sapUiTinyMarginEnd"
-                width="200px"
-                xmlns="sap.m"
-            >
-                <VBox id="todayPanelVBox">
-                    <core:Icon
-                        id="todayPanelIcon"
-                        src="sap-icon://appointment-2"
-                        color="blue"
-                        size="2rem"
-                    />
-                    <Text
-                        id="todayPanelText"
-                        text="{kpiModel>/today}"
-                        class="sapUiLargeFont"
-                    />
-                    <Text
-                        id="todayPanelDescText"
-                        text="Tarefas com prazo hoje (abertas)."
-                        class="sapUiSmallMarginTop"
-                    />
-                </VBox>
-            </Panel>
-            <Panel
-                id="tomorrowPanel"
-                headerText="Amanhã (D+1)"
-                width="200px"
-                xmlns="sap.m"
-            >
-                <VBox id="tomorrowPanelVBox">
-                    <core:Icon
-                        id="tomorrowPanelIcon"
-                        src="sap-icon://calendar"
-                        color="gray"
-                        size="2rem"
-                    />
-                    <Text
-                        id="tomorrowPanelText"
-                        text="{kpiModel>/tomorrow}"
-                        class="sapUiLargeFont"
-                    />
-                    <Text
-                        id="tomorrowPanelDescText"
-                        text="Tarefas com prazo amanhã (abertas)."
-                        class="sapUiSmallMarginTop"
-                    />
-                </VBox>
-            </Panel>
+            <GenericTile id="lateTile" header="Chamados atrasados">
+                <TileContent id="lateTileContent">
+                    <NumericContent id="lateNumericContent" valueColor="Error" value="{kpiModel>/late}" icon="sap-icon://error"/>
+                </TileContent>
+            </GenericTile>
+            <GenericTile id="todayTile" header="Chamados para hoje">
+                <TileContent id="todayTileContent">
+                    <NumericContent id="todayNumericContent" valueColor="Good" value="{kpiModel>/today}"  icon="sap-icon://appointment-2"/>
+                </TileContent>
+            </GenericTile>
+            <GenericTile id="tomorrowTile" header="Chamados para amanhã">
+                <TileContent id="tomorrowTileContent">
+                    <NumericContent id="tomorrowNumericContent" valueColor="Neutral" value="{kpiModel>/tomorrow}"  icon="sap-icon://calendar"/>
+                </TileContent>
+            </GenericTile>
+            
         </HBox>
-        <HBox id="inputHBox">
+        <HBox id="inputHBox" justifyContent="SpaceAround">
             <Input
                 id="newTaskInput"
                 placeholder="O que precisa ser feito?"
@@ -149,7 +89,7 @@
       }"
         >
             <CustomListItem id="taskListItem">
-                <HBox id="taskItemHBox">
+                <HBox id="taskItemHBox" justifyContent="SpaceAround">
                     <CheckBox
                         id="taskCheckBox"
                         selected="{done}"
@@ -166,11 +106,20 @@
         formatter: '.formatTaskClass'
     }"
                     />
-                    <GenericTag
+                    <!-- <GenericTag
                         id="taskTag"
                         text="{tag}"
                         class="sapUiTinyMarginBegin"
-                    />
+                    /> -->
+                    <ObjectStatus id="taskTag" text="{tag}" state="{:= ${tag} === 'Baixa' ? 'Success' :
+         ${tag} === 'Média' ? 'Warning' :
+         ${tag} === 'Alta' ? 'Error' :
+         ${tag} === 'Crítica' ? 'Error' :
+         'None'}" icon="{:= ${tag} === 'Baixa' ? 'sap-icon://message-success' :
+        ${tag} === 'Média' ? 'sap-icon://message-warning' :
+        ${tag} === 'Alta' ? 'sap-icon://alert' :
+        ${tag} === 'Crítica' ? 'sap-icon://error' :
+        ''}"/>
                     <HBox
                         id="taskDateHBox"
                         class="sapUiTinyMarginBegin"
@@ -186,13 +135,13 @@
                             text="{date}"
                         />
 
+                    </HBox>
                         <Button
                             id="clearTasksButton"
                             press=".onClearTasks"
                             type="Reject"
                             icon="sap-icon://delete"
                         />
-                    </HBox>
                 </HBox>
             </CustomListItem>
         </List>
