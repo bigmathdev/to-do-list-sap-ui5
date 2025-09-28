@@ -98,13 +98,7 @@
                     <Text
                         id="taskTitleText"
                         text="{title}"
-                        class="{
-        parts: [
-          {path: 'done'},
-          {path: 'isLate'}
-        ],
-        formatter: '.formatTaskClass'
-    }"
+                        class="{:= ${done} ? 'taskDone' : '' }"
                     />
                     <!-- <GenericTag
                         id="taskTag"
