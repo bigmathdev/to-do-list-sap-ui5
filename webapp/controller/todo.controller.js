@@ -3,19 +3,38 @@ sap.ui.define(
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/json/JSONModel",
     "sap/m/MessageBox",
+    "todolist/model/TaskPersistenceModel",
   ],
-  function (Controller, JSONModel, MessageBox) {
+  function (Controller, JSONModel, MessageBox, TaskPersistenceModel) {
     "use strict";
 
     return Controller.extend("todolist.controller.todo", {
+      // inicialização do controller
       onInit: function () {
-        // modelo inicial com tarefas
+        // carrega tarefas do armazenamento local
+        var aTasks = TaskPersistenceModel.loadTasks();
         var oData = {
-          tasks: [
-            { id: 1, title: "Estudar SAPUI5", done: false, tag: "Alta", date: "20/12/2024" },
-            { id: 2, title: "Criar To-Do List", done: false, tag: "Média", date: "22/12/2024" },
-          ],
+          tasks:
+            aTasks && aTasks.length
+              ? aTasks
+              : [
+                  {
+                    id: 1,
+                    title: "Exemplo de tarefa",
+                    done: false,
+                    tag: "Baixa",
+                    date: "21/12/2024",
+                  },
+                  {
+                    id: 2,
+                    title: "Criar To-Do List",
+                    done: false,
+                    tag: "Média",
+                    date: "22/12/2024",
+                  },
+                ],
         };
+
         var oModel = new JSONModel(oData);
         this.getView().setModel(oModel);
 
@@ -36,52 +55,90 @@ sap.ui.define(
       // adicionar tarefa
       onAddTask: function () {
         var oView = this.getView();
-        var sValue = oView.byId("newTaskInput").getValue();
+        var sValue = oView.byId("newTaskInput").getValue().trim();
         var sTag = oView.byId("prioritySelect").getSelectedItem()
           ? oView.byId("prioritySelect").getSelectedItem().getText()
           : "";
-
-          console.log(sTag)
         var sDate = oView.byId("taskDatePicker").getDateValue()
           ? oView.byId("taskDatePicker").getDateValue().toLocaleDateString()
           : "";
 
         var oDatePicker = oView.byId("taskDatePicker");
-        if (!sDate) {
-          oDatePicker.setValueState("Error");
-          oDatePicker.setValueStateText("Preencha a data de abertura do chamado.");
-          return;
-        } else {
-          oDatePicker.setValueState("None");
-        }
 
-        if (sValue) {
-          var oModel = oView.getModel();
-          var aTasks = oModel.getProperty("/tasks");
-          aTasks.push({
-            id: Date.now(),
-            title: sValue,
-            done: false,
-            tag: sTag,
-            date: sDate,
+        // validação dos campos
+        var bTextEmpty = !sValue;
+        var bDateEmpty = !sDate;
+        if (bTextEmpty || bDateEmpty) {
+          sap.ui.require(["sap/m/MessageToast"], function (MessageToast) {
+            if (bTextEmpty) {
+              MessageToast.show("Digite uma descrição para a tarefa.");
+              oView.byId("newTaskInput").setValueState("Error");
+              oView
+                .byId("newTaskInput")
+                .setValueStateText("Campo obrigatório.");
+            } else {
+              oView.byId("newTaskInput").setValueState("None");
+            }
+            if (bDateEmpty) {
+              setTimeout(
+                function () {
+                  MessageToast.show("Preencha a data de abertura do chamado.");
+                  oDatePicker.setValueState("Error");
+                  oDatePicker.setValueStateText(
+                    "Preencha a data de abertura do chamado."
+                  );
+                },
+                bTextEmpty ? 1000 : 0
+              );
+            } else {
+              oDatePicker.setValueState("None");
+            }
           });
-          oModel.setProperty("/tasks", aTasks);
-
-          // limpa campos
-          oView.byId("newTaskInput").setValue("");
-          oView.byId("prioritySelect").setSelectedKey("low");
-          oDatePicker.setValue("");
-
-          // atualiza KPIs
-          this._updateKpis();
+          return;
         }
+
+        var oModel = oView.getModel();
+        var aTasks = oModel.getProperty("/tasks");
+        aTasks.push({
+          id: Date.now(),
+          title: sValue,
+          done: false,
+          tag: sTag,
+          date: sDate,
+        });
+        oModel.setProperty("/tasks", aTasks);
+        TaskPersistenceModel.saveTasks(aTasks);
+
+        // limpa campos e reseta estado dos inputs
+        var oInput = oView.byId("newTaskInput");
+        oInput.setValue("");
+        oInput.setValueState("None");
+        oInput.setValueStateText("");
+        oView.byId("prioritySelect").setSelectedKey("low");
+        oDatePicker.setValue("");
+        oDatePicker.setValueState("None");
+        oDatePicker.setValueStateText("");
+
+        // atualiza KPIs
+        this._updateKpis();
+
+        // toast de sucesso
+        sap.ui.require(["sap/m/MessageToast"], function (MessageToast) {
+          MessageToast.show("Tarefa adicionada com sucesso!");
+        });
       },
 
-      // marcar/desmarcar tarefa
+      // marcar e desmarcar tarefa
       onToggleTask: function (oEvent) {
         var oContext = oEvent.getSource().getBindingContext();
         var bSelected = oEvent.getParameter("selected");
-        oContext.getModel().setProperty(oContext.getPath() + "/done", bSelected);
+        oContext
+          .getModel()
+          .setProperty(oContext.getPath() + "/done", bSelected);
+
+        // salva tarefas após alteração
+        var aTasks = oContext.getModel().getProperty("/tasks");
+        TaskPersistenceModel.saveTasks(aTasks);
 
         // atualiza KPIs
         this._updateKpis();
@@ -102,6 +159,11 @@ sap.ui.define(
                 return task.id !== sTaskId;
               });
               oModel.setProperty("/tasks", aFiltered);
+              TaskPersistenceModel.saveTasks(aFiltered);
+
+              sap.ui.require(["sap/m/MessageToast"], function (MessageToast) {
+                MessageToast.show("Tarefa excluída com sucesso!");
+              });
 
               // atualiza KPIs
               this._updateKpis();
@@ -115,9 +177,18 @@ sap.ui.define(
         this.onAddTask();
       },
 
-      /**
-       * Atualiza KPIs (atrasadas, hoje, amanhã)
-       */
+      // Limpar todas as tarefas
+      onClearAllTasks: function () {
+        var oModel = this.getView().getModel();
+        oModel.setProperty("/tasks", []);
+        TaskPersistenceModel.clearTasks();
+        this._updateKpis();
+        sap.ui.require(["sap/m/MessageToast"], function (MessageToast) {
+          MessageToast.show("Todas as tarefas foram removidas!");
+        });
+      },
+
+      //atualiza KPIs (atrasadas, hoje, amanhã)
       _updateKpis: function () {
         var aTasks = this.getView().getModel().getProperty("/tasks");
         var oKpiData = { late: 0, today: 0, tomorrow: 0 };
@@ -137,7 +208,8 @@ sap.ui.define(
           // flags auxiliares
           task.isLate = !task.done && taskDate < today;
           task.isToday = !task.done && taskDate.getTime() === today.getTime();
-          task.isTomorrow = !task.done && taskDate.getTime() === tomorrow.getTime();
+          task.isTomorrow =
+            !task.done && taskDate.getTime() === tomorrow.getTime();
 
           // KPIs
           if (task.isLate) {
@@ -153,33 +225,35 @@ sap.ui.define(
         this.getView().getModel().refresh(true);
       },
 
-      /**
-       * Formatter para aplicar classe CSS nas tarefas
-       */
-      formatTaskClass: function (bDone, bLate) {
-        if (bDone) {
-          return "taskDone";
-        }
-        if (bLate) {
-          return "taskLate";
-        }
-        return "";
-      },
-
-      statusState: function(sTag) {
+      // retorna o estado visual para a tag de prioridade
+      getTagState: function (sTag) {
         switch (sTag) {
-          case "Crítica":
-            return "Error"
-          case "Alta":
-            return "Error";
-          case "Média":
-            return "Warning";
           case "Baixa":
             return "Success";
+          case "Média":
+            return "Warning";
+          case "Alta":
+          case "Crítica":
+            return "Error";
           default:
             return "None";
         }
-      }
+      },
+
+      getTagIcon: function (sTag) {
+        switch (sTag) {
+          case "Baixa":
+            return "sap-icon://message-success";
+          case "Média":
+            return "sap-icon://message-warning";
+          case "Alta":
+            return "sap-icon://alert";
+          case "Crítica":
+            return "sap-icon://error";
+          default:
+            return "";
+        }
+      },
     });
   }
 );
