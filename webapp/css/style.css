@@ -1,9 +1,89 @@
 .taskDone {
-  text-decoration: line-through;
-  color: gray;
+  text-decoration: line-through !important;
+  color: gray !important;
 }
 
-.taskLate {
-  color: red;
-  font-weight: bold;
+.inputBoxClass {
+  margin: 1rem 0 !important;
+}
+
+.kpiCard {
+  margin: 0.5rem !important;
+}
+
+.taskItemMobileLayout {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0.5rem !important;
+}
+
+.taskInfoMobileLayout {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.taskSpacerMobileLayout {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 5rem !important;
+}
+
+@media (max-width: 768px) {
+  .fullWidthMobile {
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box;
+    margin-bottom: 8px;
+    align-self: stretch !important;
+  }
+  .inputBoxClass {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+  }
+
+  .kpiCard {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+
+  .KpiBoxClass {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
+  .taskItemMobileLayout {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.5rem !important;
+  }
+
+  .taskSpacerMobileLayout {
+    display: flex !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .inputBoxClass {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    width: auto !important;
+  }
+  .fullWidthMobile {
+    width: auto !important;
+    margin-bottom: 0 !important;
+    align-self: auto !important;
+  }
 }

@@ -11,35 +11,68 @@
         <HBox
             justifyContent="SpaceAround"
             id="kpiBox"
-            class="sapUiSmallMarginBottom"
+            class="KpiBoxClass sapUiSmallMarginBottom"
         >
-            <GenericTile id="lateTile" header="Chamados atrasados">
+            <GenericTile
+                id="lateTile"
+                class="kpiCard"
+                header="Chamados atrasados"
+            >
                 <TileContent id="lateTileContent">
-                    <NumericContent id="lateNumericContent" valueColor="Error" value="{kpiModel>/late}" icon="sap-icon://error"/>
+                    <NumericContent
+                        id="lateNumericContent"
+                        valueColor="Error"
+                        value="{kpiModel>/late}"
+                        icon="sap-icon://error"
+                    />
                 </TileContent>
             </GenericTile>
-            <GenericTile id="todayTile" header="Chamados para hoje">
+            <GenericTile
+                id="todayTile"
+                class="kpiCard"
+                header="Chamados para hoje"
+            >
                 <TileContent id="todayTileContent">
-                    <NumericContent id="todayNumericContent" valueColor="Good" value="{kpiModel>/today}"  icon="sap-icon://appointment-2"/>
+                    <NumericContent
+                        id="todayNumericContent"
+                        valueColor="Good"
+                        value="{kpiModel>/today}"
+                        icon="sap-icon://appointment-2"
+                    />
                 </TileContent>
             </GenericTile>
-            <GenericTile id="tomorrowTile" header="Chamados para amanhã">
+            <GenericTile
+                id="tomorrowTile"
+                class="kpiCard"
+                header="Chamados para amanhã"
+            >
                 <TileContent id="tomorrowTileContent">
-                    <NumericContent id="tomorrowNumericContent" valueColor="Neutral" value="{kpiModel>/tomorrow}"  icon="sap-icon://calendar"/>
+                    <NumericContent
+                        id="tomorrowNumericContent"
+                        valueColor="Neutral"
+                        value="{kpiModel>/tomorrow}"
+                        icon="sap-icon://calendar"
+                    />
                 </TileContent>
             </GenericTile>
-            
         </HBox>
-        <HBox id="inputHBox" justifyContent="SpaceAround">
+        <HBox
+            id="inputHBox"
+            class="inputBoxClass"
+            justifyContent="Center"
+        >
             <Input
                 id="newTaskInput"
                 placeholder="O que precisa ser feito?"
-                width="100%"
                 submit=".onInputSubmit"
                 maxLength="200"
+                class="inputField fullWidthMobile"
             />
 
-            <Select id="prioritySelect">
+            <Select
+                id="prioritySelect"
+                class="fullWidthMobile"
+            >
                 <items>
                     <core:Item
                         id="priorityLow"
@@ -66,10 +99,10 @@
 
             <DatePicker
                 id="taskDatePicker"
+                class="datePickerField fullWidthMobile"
                 placeholder="dd/mm/aaaa"
                 displayFormat="dd/MM/yyyy"
                 valueFormat="yyyy-MM-dd"
-                width="150px"
                 minDate="{dateModel>/ui5date}"
             />
 
@@ -79,69 +112,67 @@
                 press=".onAddTask"
                 type="Emphasized"
                 icon="sap-icon://add"
+                class="fullWidthMobile"
             />
         </HBox>
 
         <List
             id="taskList"
-            items="{
-        path: '/tasks'
-      }"
+            items="{ path: '/tasks' }"
+            noDataText="Não existe tarefas pendentes!"
         >
             <CustomListItem id="taskListItem">
-                <HBox id="taskItemHBox" justifyContent="SpaceAround">
-                    <CheckBox
-                        id="taskCheckBox"
-                        selected="{done}"
-                        select=".onToggleTask"
-                    />
-                    <Text
-                        id="taskTitleText"
-                        text="{title}"
-                        class="{
-        parts: [
-          {path: 'done'},
-          {path: 'isLate'}
-        ],
-        formatter: '.formatTaskClass'
-    }"
-                    />
-                    <!-- <GenericTag
-                        id="taskTag"
-                        text="{tag}"
-                        class="sapUiTinyMarginBegin"
-                    /> -->
-                    <ObjectStatus id="taskTag" text="{tag}" state="{:= ${tag} === 'Baixa' ? 'Success' :
-         ${tag} === 'Média' ? 'Warning' :
-         ${tag} === 'Alta' ? 'Error' :
-         ${tag} === 'Crítica' ? 'Error' :
-         'None'}" icon="{:= ${tag} === 'Baixa' ? 'sap-icon://message-success' :
-        ${tag} === 'Média' ? 'sap-icon://message-warning' :
-        ${tag} === 'Alta' ? 'sap-icon://alert' :
-        ${tag} === 'Crítica' ? 'sap-icon://error' :
-        ''}"/>
+                <HBox
+                    id="taskItemHBox"
+                    class="taskItemMobileLayout"
+                >
                     <HBox
-                        id="taskDateHBox"
-                        class="sapUiTinyMarginBegin"
+                        id="taskInfoHBox"
+                        class="taskInfoMobileLayout"
                     >
-                        <core:Icon
-                            id="taskDateIcon"
-                            src="sap-icon://calendar"
-                            size="1rem"
-                            class="sapUiTinyMarginEnd"
+                        <CheckBox
+                            id="taskCheckBox"
+                            selected="{done}"
+                            select=".onToggleTask"
                         />
                         <Text
-                            id="taskDateText"
-                            text="{date}"
+                            id="taskTitleText"
+                            text="{title}"
+                            class="{:= ${done} ? 'taskDone' : '' }"
                         />
-
                     </HBox>
+                    <HBox
+                        id="taskSpacer"
+                        class="taskSpacerMobileLayout"
+                    >
+                        <ObjectStatus
+                            id="taskTag"
+                            text="{tag}"
+                            state="{ path: 'tag', formatter: '.getTagState' }"
+                            icon="{ path: 'tag', formatter: '.getTagIcon' }"
+                        />
+                        <HBox
+                            id="taskDateHBox"
+                            class="sapUiTinyMarginBegin"
+                        >
+                            <core:Icon
+                                id="taskDateIcon"
+                                src="sap-icon://calendar"
+                                size="1rem"
+                                class="sapUiTinyMarginEnd"
+                            />
+                            <Text
+                                id="taskDateText"
+                                text="{date}"
+                            />
+                        </HBox>
                         <Button
                             id="clearTasksButton"
                             press=".onClearTasks"
                             type="Reject"
                             icon="sap-icon://delete"
                         />
+                    </HBox>
                 </HBox>
             </CustomListItem>
         </List>
