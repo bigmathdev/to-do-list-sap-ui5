@@ -1,36 +1,47 @@
-## Application Details
-|               |
-| ------------- |
-|**Generation Date and Time**<br>Sat Sep 27 2025 16:22:29 GMT-0300 (Horário Padrão de Brasília)|
-|**App Generator**<br>SAP Fiori Application Generator|
-|**App Generator Version**<br>1.18.7|
-|**Generation Platform**<br>Visual Studio Code|
-|**Template Used**<br>Basic|
-|**Service Type**<br>None|
-|**Service URL**<br>N/A|
-|**Module Name**<br>to-do-list|
-|**Application Title**<br>To-do List|
-|**Namespace**<br>|
-|**UI5 Theme**<br>sap_horizon|
-|**UI5 Version**<br>1.140.0|
-|**Enable Code Assist Libraries**<br>False|
-|**Enable TypeScript**<br>False|
-|**Add Eslint configuration**<br>False|
 
-## to-do-list
+# To-Do List SAP UI5
 
-An SAP Fiori application.
+Esta aplicação é uma lista de tarefas desenvolvida com SAP Fiori (UI5), seguindo o padrão MVC. Todos os dados são manipulados localmente, sem integração com backend.
 
-### Starting the generated app
+## Relatório
+Este projeto foi desenvolvido seguindo as melhores práticas do SAP UI5, com foco em modularidade e reutilização de componentes. A estrutura do projeto é organizada para facilitar a manutenção e escalabilidade. A aplicação permite adicionar, editar e remover tarefas, com persistência local utilizando o modelo JSON do UI5. A interface é responsiva e adaptada para diferentes dispositivos, seguindo as diretrizes do SAP Fiori.
 
--   This app has been generated using the SAP Fiori tools - App Generator, as part of the SAP Fiori tools suite.  To launch the generated application, run the following from the generated application root folder:
+## Estrutura do Projeto
+- `webapp/`
+    - `controller/`: Controllers JS (lógica de eventos e manipulação de dados)
+    - `view/`: Views XML (interface do usuário)
+    - `model/`: Modelos JS para dados e persistência
+    - `i18n/`: Internacionalização
+    - `css/`: Estilos customizados
+    - `test/`: Testes unitários (QUnit) e de integração (OPA5)
+- `Component.js`: Componente principal da aplicação
+- `manifest.json`: Configurações do app e dependências
 
-```
-    npm start
-```
+## Como executar
+1. Instale as dependências:
+     ```powershell
+     npm install
+     ```
+2. Inicie a aplicação localmente:
+     ```powershell
+     npm start
+     ```
+3. Acesse no navegador: `http://localhost:8080`
 
-#### Pre-requisites:
+## Funcionalidades
+- Adicionar, editar e remover tarefas
+- Persistência local das tarefas
+- Interface responsiva baseada em SAP Fiori
 
-1. Active NodeJS LTS (Long Term Support) version and associated supported NPM version.  (See https://nodejs.org)
+## Convenções
+- Estrutura MVC SAPUI5
+- Controllers manipulam eventos e atualizam modelos
+- Views em XML para UI
 
+## Requisitos
+- Node.js
+- UI5 versão 1.140.0
+
+## Licença
+MIT
 
